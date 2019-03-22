@@ -5,7 +5,7 @@ PETITION_ID=241584
 
 # rock into the petition dir and make sure we're all up to date, because
 # scripts always be changin'
-cd ~/petitions && git pull
+cd ~/petitions && git pull >/dev/null 2>&1
 # get the name of the last changed datafile (we have loads already, so there's no need
 # to put safegaurds in here to check for "oh no there's no files" etc.)
 DATAFILE_LAST=$(ls -1 json/${PETITION_ID}-*.json | tail -1)
@@ -14,7 +14,6 @@ DATAFILE_THIS=json/${PETITION_ID}-$(date +"%Y%m%d-%H%M").json
 # grab that juicy json shizzle, which is published under an Open Government Licence
 # and this data is used and republished under the terms of that licence
 # https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
-wget -q -t 10 https://petition.parliament.uk/petitions/${PETITION_ID}.json -O ${DATAFILE_THIS}
 curl --silent --retry 10 --retry-delay 15 https://petition.parliament.uk/petitions/${PETITION_ID}.json 2>/dev/null | jq . > ${DATAFILE_THIS} 2>/dev/null
 # if what we just downloaded is empty, something went wrong
 if [ "$(strings ${DATAFILE_THIS})" == "" ]
