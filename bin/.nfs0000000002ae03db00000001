@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# saucy petition time
+PETITION_ID=241584
+
+# rock into the petition dir and make sure we're all up to date, because
+# scripts always be changin'
+cd ~/petitions && git pull
+# get the name of the last changed datafile (we have loads already, so there's no need
+# to put safegaurds in here to check for "oh no there's no files" etc
+DATAFILE_LAST=$(ls -1 json/${PETITION_ID}-*.json | tail -1)
+# generate the name of the file we're going to download, and potentially keep
+DATAFILE_THIS=json/${PETITION_ID}-$(date +"%Y%m%d-%H%M").json
+# grab that juicy json shizzle, which is published under an Open Government Licence
+# and this data is used and republished under the terms of that licence
+# https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+wget -q -t 10 https://petition.parliament.uk/petitions/${PETITION_ID}.json -O ${DATAFILE_THIS}
+# let's see if what we just downloaded matches what we downloaded previously
+if [ "$(diff ${DATAFILE_LAST} ${DATAFILE_THIS})" == "" ]
+then
+	# if it is identical, bin what we just downloaded, it's of no use to us
+	rm -f ${DATAFILE_THIS} >/dev/null
+else
+	# if it is not identical, then don't bin in, and in fact let's commit it to git
+	git add . >/dev/null 2>&1 && git commit -am "[auto] $(date +'%Y%m%d%H%M%Z') $(basename ${0}) on ${HOSTNAME} by $(whoami)" >/dev/null 2>&1 && git push origin master >/dev/null 2>&1
+fi
+# we're done; LET'S GET THE HELL OUT OF HERE ... but let's NOT get out of the EU
+# do you see what I did there/
