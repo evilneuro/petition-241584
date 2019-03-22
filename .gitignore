@@ -3,6 +3,7 @@
 *.swp
 ~$*
 ._*
+.nfs*
 bin/pull
 csv/
 template.json
