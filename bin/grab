@@ -20,14 +20,12 @@ if [ "$(cat ${DATAFILE_THIS} | jq -r '.data.attributes.updated_at')" == "" ]
 then
 	rm -f ${DATAFILE_THIS} >/dev/null
 	exit 1
-fi
 # if what we just downloaded has an 'updated_at' field, let's see if it
 # matches what we downloaded previously
-if [ "$(cat ${DATAFILE_LAST} | jq -r '.data.attributes.updated_at')" == "$(cat ${DATAFILE_THIS} | jq -r '.data.attributes.updated_at')" ]
+elif [ "$(cat ${DATAFILE_LAST} | jq -r '.data.attributes.updated_at')" == "$(cat ${DATAFILE_THIS} | jq -r '.data.attributes.updated_at')" ]
 then
 	# if it is identical, bin what we just downloaded, it's of no use to us
 	rm -f ${DATAFILE_THIS} >/dev/null
-	exit 1
 fi
 # whatever's left, let's commit it to git
 git add . >/dev/null 2>&1 && git commit -am "[auto] $(date +'%Y%m%d%H%M%Z') $(basename ${0}) on ${HOSTNAME} by $(whoami)" >/dev/null 2>&1 && git push origin master >/dev/null 2>&1
