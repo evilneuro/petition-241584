@@ -18,6 +18,7 @@ curl --silent --retry 10 --retry-delay 15 https://petition.parliament.uk/petitio
 # if what we just downloaded has no 'updated_at' field, something went wrong
 if [ "$(cat ${DATAFILE_THIS} | jq -r '.data.attributes.updated_at')" == "" ]
 then
+	rm -f ${DATAFILE_THIS} >/dev/null
 	exit 1
 fi
 # if what we just downloaded has an 'updated_at' field, let's see if it
