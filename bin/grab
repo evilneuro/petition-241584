@@ -15,7 +15,14 @@ DATAFILE_THIS=json/${PETITION_ID}-$(date +"%Y%m%d-%H%M").json
 # and this data is used and republished under the terms of that licence
 # https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
 wget -q -t 10 https://petition.parliament.uk/petitions/${PETITION_ID}.json -O ${DATAFILE_THIS}
-# let's see if what we just downloaded matches what we downloaded previously
+curl --silent --retry 10 --retry-delay 15 https://petition.parliament.uk/petitions/${PETITION_ID}.json 2>/dev/null | jq . > ${DATAFILE_THIS} 2>/dev/null
+# if what we just downloaded is empty, something went wrong
+if [ "$(strings ${DATAFILE_THIS})" == "" ]
+then
+	exit 1
+fi
+# if what we just downloaded isn't empty, let's see if it
+# matches what we downloaded previously
 if [ "$(diff ${DATAFILE_LAST} ${DATAFILE_THIS})" == "" ]
 then
 	# if it is identical, bin what we just downloaded, it's of no use to us
