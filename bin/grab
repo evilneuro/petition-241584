@@ -8,7 +8,7 @@ PETITION_ID=241584
 cd ~/petitions && git pull
 # get the name of the last changed datafile (we have loads already, so there's no need
 # to put safegaurds in here to check for "oh no there's no files" etc
-DATAFILE_LAST=json/$(ls -1 ${PETITION_ID}-*.json | tail -1)
+DATAFILE_LAST=$(basename $(ls -1 json/${PETITION_ID}-*.json | tail -1))
 # generate the name of the file we're going to download, and potentially keep
 DATAFILE_THIS=json/${PETITION_ID}-$(date +"%Y%m%d-%H%M").json
 # grab that juicy json shizzle, which is published under an Open Government Licence
