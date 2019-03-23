@@ -61,6 +61,8 @@ then
 	# if it is identical, bin what we just downloaded, it's of no use to us
 	rm -f ${DATAFILE_THIS} >/dev/null
 fi
+# do a build of the summary timeline JSON file
+bash bin/build -p ${PETITION_ID}
 # whatever's left, let's commit it to git
 git add . >/dev/null 2>&1 && git commit -am "[auto] $(date +'%Y%m%d%H%M%Z') $(basename ${0}) on ${HOSTNAME} by $(whoami)" >/dev/null 2>&1 && git push origin master >/dev/null 2>&1
 # we're done; LET'S GET THE HELL OUT OF HERE ... but let's NOT get out of the EU
