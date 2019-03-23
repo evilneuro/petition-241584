@@ -63,9 +63,9 @@ then
 fi
 # do a build of the summary timeline JSON file
 bash bin/build -p ${PETITION_ID}
-# symlink to latest data file
-ln -sf $(ls -1tr json/${PETITION_ID}-*.json | tail -1) petition_data.json
+# make a copy in the repo root of the latest data file
+cp -af $(ls -1tr json/${PETITION_ID}-*.json | tail -1) ${PETITION_ID}-data_latest.json
 # whatever's left, let's commit it to git
-git add . >/dev/null 2>&1 && git commit -am "[auto] $(date +'%Y%m%d%H%M%Z') $(basename ${0}) on ${HOSTNAME} by $(whoami)" >/dev/null 2>&1 && git push origin master >/dev/null 2>&1
+git add . >/dev/null 2>&1 && git commit -am "[auto] $(date +'%Y%m%d%H%M%Z') $(basename ${0}) on ${HOSTNAME} by $(whoami) for petition ${PETITION_ID}" >/dev/null 2>&1 && git push origin master >/dev/null 2>&1
 # we're done; LET'S GET THE HELL OUT OF HERE ... but let's NOT get out of the EU
 # do you see what I did there?

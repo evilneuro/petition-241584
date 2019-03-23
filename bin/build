@@ -47,4 +47,5 @@ do
 	JSON_BUILD="${JSON_BUILD}$(${JO_CLI_COMMAND} updated_at="${JSON_UPDATED}" signature_count=${JSON_SIGCOUNT}),"
 done
 JSON_BUILD="$(echo ${JSON_BUILD} | sed s'/.$//')]"
-echo ${JSON_BUILD} | ${JQ_CLI_COMMAND} . > signature_count.json
+echo ${JSON_BUILD} | ${JQ_CLI_COMMAND} . > ${PETITION_ID}-count_historical.json
+${JO_CLI_COMMAND} updated_at="${JSON_UPDATED}" signature_count=${JSON_SIGCOUNT} | ${JQ_CLI_COMMAND} . > ${PETITION_ID}-count_latest.json
