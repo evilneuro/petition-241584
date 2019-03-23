@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+#
+# git@github.com:evilneuro/petition-241584/bin/build
+# Build a JSON data file of signatures over time
+#
+# (c) 2019 William Anderson <neuro@well.com>
+
+PETITIONS_DIR=~/petitions
+JO_CLI_COMMAND="/usr/bin/jo"
+JQ_CLI_COMMAND="/usr/local/bin/jq"
+
+if [ ! -d ${PETITIONS_DIR} ]; then echo "$(basename ${0}): where is ${PETITIONS_DIR}" >&2; exit 1; fi
+if [ ! -x $JO_CLI_COMMAND ]; then echo "$(basename $0): can't find jo" >&2; exit 1; fi
+if [ ! -x $JQ_CLI_COMMAND ]; then echo "$(basename $0): can't find jq" >&2; exit 1; fi
+
+function usage() {
+	echo -e "usage: $(basename ${0}) -p [PETITION ID]"
+	exit 1
+}
+
+while getopts "hp:" CLI_OPTIONS
+do
+	case ${CLI_OPTIONS} in
+		h)
+			usage
+			exit 0
+			;;
+		p)
+			PETITION_ID=${OPTARG}
+			;;
+		*)
+			echo "$(basename ${0}): option '-${OPTARG}' is not supported" >&2
+			usage
+			;;
+	esac
+done
+
+if [ "${PETITION_ID}" == "" ]; then echo "$(basename $0): need a petition ID (-p XXXXX)" >&2; exit 1; fi
+
+cd ${PETITIONS_DIR}
+
+JSON_BUILD="["
+for JSON_FILE in json/${PETITION_ID}-*.json
+do
+	JSON_SIGCOUNT=$(${JQ_CLI_COMMAND} -r '.data.attributes.signature_count' ${JSON_FILE})
+	JSON_UPDATED=$(${JQ_CLI_COMMAND} -r '.data.attributes.updated_at' ${JSON_FILE} | sed 's/T/ /' | cut -d. -f1)
+	JSON_BUILD="${JSON_BUILD}$(${JO_CLI_COMMAND} updated_at="${JSON_UPDATED}" signature_count=${JSON_SIGCOUNT}),"
+done
+JSON_BUILD="$(echo ${JSON_BUILD} | sed s'/.$//')]"
+echo ${JSON_BUILD} | ${JQ_CLI_COMMAND} . > signature_count.json
