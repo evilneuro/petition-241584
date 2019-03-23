@@ -4,6 +4,7 @@
 ~$*
 ._*
 .nfs*
+bin/build
 bin/pull
 bin/scan
 csv/
